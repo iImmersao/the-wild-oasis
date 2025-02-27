@@ -1,10 +1,29 @@
 import SortBy from "../../ui/SortBy";
 import Filter from "../../ui/Filter";
 import TableOperations from "../../ui/TableOperations";
+import { useCabins } from "../cabins/useCabins";
+import Spinner from "../../ui/Spinner";
 
 function BookingTableOperations() {
+  const { isLoading, cabins } = useCabins();
+
+  if (isLoading) return <Spinner />;
+
+  if (!cabins.length) return <Spinner />;
+
+  const cabinOptions = [
+    { value: "all", label: "All" },
+    ...cabins
+      .map((x) => {
+        return { value: x.id, label: x.name };
+      })
+      .sort((a, b) => (a.value > b.value ? 1 : -1)),
+  ];
+
   return (
     <TableOperations>
+      <Filter filterField="cabinId" options={cabinOptions} />
+
       <Filter
         filterField="status"
         options={[
